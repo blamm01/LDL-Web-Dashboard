@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lân Đông Lào</title>
+    <link rel="shortcut icon" href="/images/icon.png" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/dd4ab22b06.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <%-include("./partials/header.ejs")%>
+
+    <div id="main">
+        <div class="about">
+            <h3 class="heading">Lân Đông Lào</h3>
+            <p class="desc">Một con bot tiếng Việt của người Việt dành cho người Việt!</p>
+            <button class="invite_button about_area"
+                onclick="location.href='/api/invite'">Nhấp
+                vào để mời bot</button>
+        </div>
+
+        <div class="features">
+            <h3 class="title">Chức năng:</h3>
+
+            <div class="items">
+                <div class="item">
+                    <p>Hệ thống quản lý thành viên có 102</p>
+                    <img src="/images/quanly.png" alt="">
+                </div>
+                <div class="item">
+                    <p>Hệ thống cài đặt có sẵn</p>
+                    <img src="/images/caidat.png" alt="">
+                </div>
+                <div class="item">
+                    <p>Một vài trò chơi nho nhỏ</p>
+                    <img src="/images/game.png"></img>
+                </div>
+                <div class="item">
+                    <p>Một vài tiện ích hay ho</p>
+                    <video src="/videos/gudstuff.mp4" autoplay muted loop></video>
+                </div>
+            </div>
+        </div>
+
+        <div class="dash"></div>
+
+        <div class="invite">
+            <p class="text">Còn chần chừ gì nữa mà hãy đưa bot vào server của bạn nào!</p>
+            <button class="invite_button invite_area"
+                onclick="location.href='/api/invite/'">Nhấp
+                vào để mời bot</button>
+        </div>
+    </div>
+
+    <%- include("./partials/footer.ejs") %>
+
+    <script src="/js/defaults/app.js"></script>
+</body>
+
+<style>
+    #main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#main .about {
+    position: relative;
+    height: 70vh;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-inline: 30px;
+    text-align: center;
+}
+
+#main .about .heading {
+    font-size: 80px;
+    font-family: Calibri, sans-serif;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+#main .about .desc {
+    font-size: 24px;
+    font-family: Calibri, sans-serif;
+    margin-bottom: 40px;
+}
+
+#main .features {
+    margin-top: 200px;
+    width: 100%;
+}
+
+#main .features .title {
+    font-size: 50px;
+    font-family: Calibri, sans-serif;
+    font-weight: bold;
+    margin-bottom: 125px;
+    text-align: center;
+}
+
+#main .features .items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#main .features .items .item {
+    display: flex;
+    width: 100%;
+    margin: 40px 0;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#main .features .items .item:nth-child(odd) {
+    flex-direction: row-reverse;
+}
+
+#main .features .items .item p {
+    padding: 20px;
+    background-color: #23272a;
+    font-size: 30px;
+    border: 1px solid #23272a;
+    border-radius: 10px;
+}
+
+#main .invite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+#main .invite .text {
+    font-size: 24px;
+    margin-bottom: 25px;
+}
+
+#main .invite .invite_button {
+    margin-top: 25px;
+}
+
+/* Responsive */
+@media only screen and (max-width: 1024px) {
+    #main {
+        padding-inline: 20px;
+    }
+
+    #main .about .heading {
+        font-size: 40px;
+    }
+
+    #main .about .desc {
+        font-size: 24px;
+    }
+
+    #main .features .item {
+        flex-direction: column;
+    }
+
+    #main .features .items .item:nth-child(odd) {
+        flex-direction: column
+    }
+
+    #main .features .item p {
+        margin-bottom: 20px;
+    }
+
+    #main .features .item img,
+    #main .features .item video {
+        max-width: 325px;
+    }
+
+}
+
+@media only screen and (max-width: 300px) {
+    #main {
+        padding-inline: 40px;
+    }
+}
+</style>
+
+</html>

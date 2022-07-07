@@ -1,0 +1,97 @@
+<link rel="stylesheet" href="/css/defaults/style.css" />
+<link rel="stylesheet" href="/css/defaults/responsive.css" />
+<script
+  src="https://kit.fontawesome.com/dd4ab22b06.js"
+  crossorigin="anonymous"
+></script>
+
+<div id="header">
+  <div class="logo">
+    <a href="/"><img src="/images/landonglao.png" alt="" /></a>
+  </div>
+
+  <div class="a_items responsiveClose" id="#header_link_items">
+    <a class="item" href="/faqs/">FAQs</a>
+    <a class="item" href="/commands/">Các lệnh của bot</a>
+    <a class="item" href="/pp/">Chính sách bảo mật</a>
+    <a class="item" href="/tos/">Điều khoản dịch vụ</a>
+  </div>
+
+  <div class="header_account">
+    <% if(typeof user == "object" ) { %>
+    <img id="headerUserAvatar" src="<%= user.avatar %>" alt="" />
+    <span id="headerUserTag"><%= user.username%>#<%= user.discriminator%></span>
+    <i class="fa-solid fa-caret-down account_menu" id="#mobileAccountMenu"></i>
+    <div class="subnav_account_header menuClose">
+      <a class="item" href="/dashboard/">Bảng điều khiển</a>
+      <a class="item" href="/api/logout/">Đăng xuất</a>
+    </div>
+    <% } %> <% if(typeof user !== "object" ) { %>
+      <a class="unloggedin_btn" href="/api/login">Đăng nhập</a>
+    <% } %>
+  </div>
+
+  <div class="menu" id="#mobileHeaderMenu">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+</div>
+
+<script src="/js/defaults/app.js"></script>
+
+<style>
+  #headerUserAvatar {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+  }
+
+  #header .header_account {
+    border: 1px solid #808080;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #header .header_account img {
+    margin-right: 10px;
+  }
+
+  #header .header_account span {
+    margin-right: 10px;
+  }
+
+  #header .subnav_account_header {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    right: 0;
+    background-color: var(--header-footer-background-color);
+    box-shadow: 2px;
+    padding: 20px;
+    top: 75px;
+  }
+
+  #header .subnav_account_header .item {
+    margin-bottom: 20px;
+  }
+
+  #header .subnav_account_header .item {
+    margin-right: 20px;
+    color: white;
+    font-weight: bold;
+    display: block;
+    padding: 10px;
+    font-size: 20px;
+  }
+
+  #header .subnav_account_header .item:hover {
+    color: red;
+  }
+
+  #header .header_account .unloggedin_btn {
+    color: red;
+    font-weight: bold;
+  }
+</style>

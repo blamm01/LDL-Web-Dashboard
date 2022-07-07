@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lân Đông Lào</title>
+    <link rel="stylesheet" href="/css/defaults/style.css" />
+    <link rel="stylesheet" href="/css/defaults/responsive.css" />
+    <link rel="shortcut icon" href="/images/icon.png" type="image/x-icon" />
+    <script
+      src="https://kit.fontawesome.com/dd4ab22b06.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <%- include("./partials/header.ejs") %>
+
+    <div id="main">
+      <div id="sidebar">
+        <div class="item_links">
+          <div class="item selected">
+            <a href="#">Cài đặt chung</a>
+          </div>
+
+          <div class="item not_released">
+            <a href="#automod">Quản lý tự động</a>
+          </div>
+
+          <div class="item not_released">
+            <a href="#logs">Nhật kí điều khiển</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fake_sidebar"></div>
+
+      <div class="interaction_area main">
+        <div class="features">
+          <div class="feature settings">
+            <p class="about_text">Cài đặt chung</p>
+            <div class="dash"></div>
+            <div class="prefix setting">
+              <label for="prefix_input" class="update_label">Prefix:</label>
+              <input
+                type="text"
+                name="prefix"
+                id="prefix_input"
+                placeholder="Loading..."
+                class="update_input"
+                maxlength="3"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="interaction_area automod">
+        <div class="features">
+          <div class="feature settings">
+            <p class="about_text">Quản lý tự động</p>
+            <div class="dash"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="interaction_area logs">
+        <div class="features">
+          <div class="feature settings">
+            <p class="about_text">Nhật kí điều khiển</p>
+            <div class="dash"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="snackbars">
+      <div
+        id="makeChanges_snackbar"
+        style="width: 80%; border-radius: 10px; height: 70px"
+      >
+        <p
+          class="makeChanges_text"
+          style="font-size: 25px; font-weight: bold; line-height: 0"
+        >
+          Đồng chí có muốn lưu lại thay đổi?
+        </p>
+        <div
+          class="makeChanges_buttons"
+          style="border-radius: 10px; padding: 10px; border: none"
+        >
+          <button
+            type="button"
+            class="revertChanges makeChanges_btn"
+            style="background: none"
+            onclick="changesDetected(false, true)"
+            id="revertChangesBtn_makeChanges_snackbar"
+          >
+            Không
+          </button>
+          <button
+            type="button"
+            class="saveChanges makeChanges_btn"
+            style="background-color: #da251d"
+            onclick="changesDetected(true, false)"
+            id="saveChangesBtn_makeChanges_snackbar"
+          >
+            Có
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/defaults/app.js"></script>
+    <script type="text/javascript">
+
+      // Render Page
+      renderPage(window.location.hash == "" ? "#" : window.location.hash);
+
+      window.addEventListener("hashchange", () => {
+        renderPage(window.location.hash == "" ? "#" : window.location.hash);
+      })
+
+      async function renderPage(hash) {
+        if(!hash) hash = "#";
+        const interaction_area_div = document.querySelectorAll("#main .interaction_area");
+        let hashPageName = hash == "#" ? "main" : hash.substring(1);
+        interaction_area_div.forEach((interactionArea) => {
+          if(!interactionArea.classList.contains(hashPageName)) {
+            interactionArea.style["display"] = "none"
+          } else {
+            interactionArea.style["display"] = "block"
+          }
+        })
+      }
+      
+      async function save(type) {
+        if (type == "prefix") {
+          const prefix = document.querySelector("#prefix_input").value;
+
+          try {
+            const res = await fetch(
+              `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/prefix`,
+              {
+                method: "POST",
+                headers: {
+                  authorization: `<%= req.cookies.token %>`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  prefix: prefix,
+                }),
+              }
+            );
+            const fetchedData = await res.json();
+            if (!`${fetchedData.status}`.startsWith("2")) {
+              return alert(
+                `Lỗi khi cập nhật dữ liệu: ${
+                  fetchedData.message || "Không biết"
+                } (Mã lỗi: ${fetchedData.status || res.status || "N/A"})`
+              );
+            }
+            alert("Cập nhật thành công cài đặt của máy chủ này!");
+          } catch (err) {
+            console.log(err);
+            alert(`Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`);
+          }
+        } else {
+          alert(
+            "Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang."
+          );
+        }
+      }
+
+      async function get(type, placeholderRender = false) {
+        let returnValue;
+        if (type == "prefix") {
+          let value;
+          let data = await fetch(
+            `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/prefix`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `<%= req.cookies.token %>`,
+              },
+            }
+          );
+          if (!data) return;
+          data = await data.json();
+          const prefix = data.prefix || `<%= config.prefix %>`;
+
+          // Replace placeholder
+          if (placeholderRender) {
+            const prefixInput = document.querySelector("#prefix_input");
+            if (prefixInput) {
+              prefixInput.placeholder = prefix;
+              prefixInput.value = prefix;
+            }
+          }
+
+          returnValue = prefix;
+        } else {
+          alert(
+            "Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang."
+          );
+        }
+        return returnValue;
+      }
+
+      // Render placeholder
+      get("prefix", true);
+
+      // Detect changes
+      let changesArray = [];
+
+      get("prefix").then((prefix) => {
+        const prefixInput = document.querySelector("#prefix_input");
+        if (prefixInput) {
+          prefixInput.addEventListener("change", () => {
+            const prefixInputValue = prefixInput.value;
+            if (prefixInputValue == prefix) {
+              console.log(true);
+              if (changesArray.find((v) => v.type == "prefix"))
+                changesArray.filter((v) => v.type !== "prefix");
+              return;
+            }
+            changesArray.push({
+              type: "prefix",
+              old: prefix,
+            });
+
+            changesDetected(false, false, true);
+          });
+        }
+      });
+
+      async function changesDetected(
+        saveChanges = true,
+        revertChanges = false,
+        showMakeChanges = false
+      ) {
+        const makeChanges_snackbar = document.querySelector(
+          "#makeChanges_snackbar"
+        );
+        const validChanges = ["prefix"];
+
+        if (showMakeChanges) {
+          if (changesArray.length <= 0) {
+            if (makeChanges_snackbar.classList.contains("show")) {
+              makeChanges_snackbar.classList.remove("show");
+              makeChanges_snackbar.classList.add("hide");
+              setTimeout(() => {
+                makeChanges_snackbar.classList.remove("hide");
+              }, 450);
+            }
+            if (makeChanges_snackbar.classList.contains("hide")) {
+              makeChanges_snackbar.classList.remove("hide");
+            }
+          } else {
+            if (!makeChanges_snackbar.classList.contains("show")) {
+              if (makeChanges_snackbar.classList.contains("hide")) {
+                makeChanges_snackbar.classList.remove("hide");
+              }
+              makeChanges_snackbar.classList.add("show");
+            }
+          }
+          return;
+        }
+
+        if (changesArray.length <= 0) {
+          if (makeChanges_snackbar.classList.contains("show")) {
+            makeChanges_snackbar.classList.remove("show");
+            makeChanges_snackbar.classList.add("hide");
+            setTimeout(() => {
+              makeChanges_snackbar.classList.remove("hide");
+            }, 450);
+          }
+          if (makeChanges_snackbar.classList.contains("hide")) {
+            makeChanges_snackbar.classList.remove("hide");
+          }
+          return;
+        }
+
+        if (saveChanges == true && revertChanges == false) {
+          const saveChangesButton = document.querySelector("#saveChangesBtn_makeChanges_snackbar")
+          console.log(saveChangesButton)
+          if(saveChangesButton) {
+            saveChangesButton.innerText = "..."
+          }
+          const mapChanges = () => new Promise(async(ful) => {
+            await changesArray.map(async(change) => {
+            if (!change.type || !validChanges.includes(change.type)) return;
+            await save(change.type);
+            changesArray.filter((v) => v.type !== change.type);
+            await get(change.type, true);
+            ful()
+          });
+          })
+          mapChanges().then(() => window.location.reload())
+        } else if (saveChanges == false && revertChanges == true) {
+          changesArray = [];
+          window.location.reload();
+        } else {
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    --sidebar-width: 300px;
+    --sidebar-background-color: #202225;
+  }
+
+  #sidebar {
+    overflow: scroll
+  }
+
+  #sidebar .item {
+    margin: 20px 0;
+    padding-inline: 30px;
+    justify-content: left;
+    display: flex;
+    position: relative;
+    align-items: center;
+  }
+
+  #sidebar .item_links {
+    padding-inline: 20px;
+  }
+
+  #sidebar .item:hover a {
+    color: red
+  }
+
+  #sidebar .item.not_released a {
+    color: grey !important;
+  }
+
+  #sidebar .item a {
+    text-align: left;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  #sidebar .item.selected {
+    border-radius: 10px;
+    background-color: #2c2f33;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  #sidebar .item.selected::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    color: white;
+    left: 10px;
+    background-color: white;
+    border-radius: 50%;
+  }
+
+  #sidebar .item.selected a {
+    color: white !important;
+  }
+
+  #snackbars {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #snackbars #makeChanges_snackbar {
+    visibility: hidden;
+    bottom: 30px;
+    position: fixed;
+    background-color: #555860;
+    justify-content: space-between;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    width: 600px;
+    text-align: center;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.4);
+  }
+
+  #snackbars #makeChanges_snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.45s;
+    animation: fadein 0.45s;
+  }
+
+  #snackbars #makeChanges_snackbar.hide {
+    visibility: visible;
+    -webkit-animation: fadeout 0.45s;
+    animation: fadeout 0.45s;
+  }
+
+  #snackbars .makeChanges_btn {
+    font-size: 20px;
+    font-family: calibri;
+    border-radius: 10px;
+    /* background: none; */
+    padding: 10px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding-inline: 50px;
+    cursor: pointer;
+  }
+
+  #main {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+  }
+
+  #main #sidebar {
+    background-color: var(--sidebar-background-color);
+    width: var(--sidebar-width);
+    overflow: hidden;
+    height: 100%;
+    position: fixed;
+  }
+
+  #main .fake_sidebar {
+    width: var(--sidebar-width);
+  }
+
+  #main .interaction_area {
+    padding-inline: 30px;
+    width: calc(100% - var(--sidebar-width));
+    padding-top: 20px;
+  }
+
+  #main .servers {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #main .servers .server {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    border: 3px solid #ff0000;
+    padding: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  #main .server img {
+    width: 175px;
+    margin-bottom: 20px;
+  }
+
+  #main .server span {
+    font-size: 30px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  #main .server p {
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: aqua;
+    border: 1px solid none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  #main .feature .about_text {
+    font-weight: bold;
+    text-align: center;
+    font-size: 50px;
+  }
+
+  #main .feature {
+    text-align: left;
+  }
+
+  #main .setting {
+    align-items: center;
+    display: flex;
+  }
+
+  #main .setting .updateBtn {
+    padding: 5px;
+    border-radius: 5px;
+    background-color: red;
+    border-color: red;
+    color: white;
+    cursor: pointer;
+  }
+
+  #main .setting .update_input {
+    padding: 15px;
+    background-color: #4a4d54;
+    width: 250px;
+    margin: 0 10px;
+    border: none;
+    color: white;
+    border-radius: 10px;
+  }
+
+  #main .setting .update_label {
+    font-size: 30px;
+    font-weight: bold;
+  }
+
+  /* Snackbar Animation */
+  @-webkit-keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    #main {
+      padding-inline: 10px;
+    }
+
+    #main .text .heading {
+      font-size: 30px;
+    }
+  }
+</style>
