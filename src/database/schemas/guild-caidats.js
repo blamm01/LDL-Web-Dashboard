@@ -23,6 +23,10 @@ const schema = new mongoose.Schema({
     bwword: {
         type: Array,
         default: []
+    },
+    logchannelid: {
+        type: String,
+        default: 0
     }
 })
 

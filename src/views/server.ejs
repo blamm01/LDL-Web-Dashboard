@@ -52,6 +52,21 @@
                 maxlength="3"
               />
             </div>
+
+            <div class="logs setting">
+              <label for="logs_input" class="update_label">Kênh nhật kí:</label>
+              <!-- <input -->
+                <!-- type="text" -->
+                <!-- name="logs" -->
+                <!-- id="logs_input" -->
+                <!-- placeholder="Loading..." -->
+                <!-- class="update_input" -->
+                <!-- maxlength="3" -->
+              <!-- /> -->
+              <select name="logs" id="logs_select" class="update_select">
+                <option value="turn_off" selected>Tắt</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -161,7 +176,36 @@
                 } (Mã lỗi: ${fetchedData.status || res.status || "N/A"})`
               );
             }
-            alert("Cập nhật thành công cài đặt của máy chủ này!");
+          } catch (err) {
+            console.log(err);
+            alert(`Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`);
+          }
+        } else if (type == "log") {
+          let log = document.querySelector("#logs_select").value;
+          if(log == "turn_off") log = "0"
+
+          try {
+            const res = await fetch(
+              `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/logchannel`,
+              {
+                method: "POST",
+                headers: {
+                  authorization: `<%= req.cookies.token %>`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  log: log,
+                }),
+              }
+            );
+            const fetchedData = await res.json();
+            if (!`${fetchedData.status}`.startsWith("2")) {
+              return alert(
+                `Lỗi khi cập nhật dữ liệu: ${
+                  fetchedData.message || "Không biết"
+                } (Mã lỗi: ${fetchedData.status || res.status || "N/A"})`
+              );
+            }
           } catch (err) {
             console.log(err);
             alert(`Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`);
@@ -200,6 +244,31 @@
           }
 
           returnValue = prefix;
+        } else if (type == "log") {
+          let value;
+          let data = await fetch(
+            `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/logchannel`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `<%= req.cookies.token %>`,
+              },
+            }
+          );
+          if (!data) return;
+          data = await data.json();
+          const log = data.log || "0";
+
+          // Replace placeholder
+          // if (placeholderRender) {
+          //   const prefixInput = document.querySelector("#");
+          //   if (prefixInput) {
+          //     prefixInput.placeholder = prefix;
+          //     prefixInput.value = prefix;
+          //   }
+          // }
+
+          returnValue = log;
         } else {
           alert(
             "Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang."
@@ -297,7 +366,10 @@
             ful()
           });
           })
-          mapChanges().then(() => window.location.reload())
+          mapChanges().then(() => {
+            alert("Cập nhật thành công dữ liệu của máy chủ này! Vui lòng nhấn OK để tải lại trang");
+            window.location.reload();
+          })
         } else if (saveChanges == false && revertChanges == true) {
           changesArray = [];
           window.location.reload();
@@ -488,6 +560,7 @@
   #main .setting {
     align-items: center;
     display: flex;
+    margin: 30px 0;
   }
 
   #main .setting .updateBtn {
@@ -512,6 +585,14 @@
   #main .setting .update_label {
     font-size: 30px;
     font-weight: bold;
+  }
+
+  #main .setting .update_select {
+    width: fit-content;
+    min-width: fit-content;
+    padding: 10px;
+    height: auto;
+    margin: 0 10px;
   }
 
   /* Snackbar Animation */
