@@ -178,7 +178,6 @@ module.exports = {
                     message: "Forbidden: The logged in member doesn't have enough permissions."
                 })
                 let prefix = `${req.body?.prefix}`
-                console.log(`${req.body?.prefix}`)
                 if(!prefix || prefix == "") prefix = `${config.prefix}`
                 if(prefix.length > 3) return res.status(400).send({
                     status: 400,
@@ -259,6 +258,129 @@ module.exports = {
                 return res.status(200).send({
                     status: 200,
                     prefix: caidatData.prefix
+                })
+            }
+        },
+        {
+            method: "post",
+            path: "/features/settings/:guildId/logchannel",
+            callback: async (req, res) => {
+                const data = await authorizeUser(req, res)
+                const guildId = req.params.guildId;
+                if (!data || !`${data.status}`.startsWith("2")) return;
+                if (!guildId || isNaN(guildId)) return res.status(400).send({
+                    status: 400,
+                    message: 'Invalid form params: guildId, not found or guild id is not a number'
+                })
+                let guild;
+                try {
+                    guild = await client.guilds.fetch(guildId)
+                } catch (e) {
+                    return res.status(403).send({
+                        status: 403,
+                        message: "Forbidden: The requested guild is not accessible."
+                    })
+                }
+                if (!guild) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The requested guild is not accessible."
+                })
+                let member;
+                try {
+                    member = await guild.members.fetch(data?.args.user.id || null)
+                } catch (e) {
+                    return res.status(403).send({
+                        status: 403,
+                        message: "Forbidden: The logged in member is not found in the guild."
+                    })
+                }
+                if (!member) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The logged in member is not found in the guild."
+                })
+                if (!member.permissions.has("ADMINISTRATOR")) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The logged in member doesn't have enough permissions."
+                })
+                let log = `${req.body?.log}`
+                if(!log) log == "0";
+                let caidatData = await caidatSchema.findOne({ _id: guildId })
+                if (!caidatData) {
+                    caidatData = await caidatSchema.create({
+                        _id: guildId,
+                        prefix: prefix,
+                        logchannelid: log
+                    })
+                    return res.status(201).send({
+                        status: 201,
+                        data: caidatData
+                    })
+                }
+                caidatData.logchannelid = log
+                try {
+                    await caidatData.save()
+                } catch(err) {
+                    console.log(err)
+                }
+                res.status(201).send({
+                    status:201,
+                    data: caidatData
+                })
+            }
+        },
+        {
+            method: "get",
+            path: "/features/settings/:guildId/logchannel",
+            callback: async (req, res) => {
+                const data = await authorizeUser(req, res)
+                const guildId = req.params.guildId;
+                if (!data || !`${data.status}`.startsWith("2")) return;
+                if (!guildId || isNaN(guildId)) return res.status(400).send({
+                    status: 400,
+                    message: 'Invalid form params: "guildId"'
+                })
+                let guild;
+                try {
+                    guild = await client.guilds.fetch(guildId)
+                } catch (e) {
+                    return res.status(403).send({
+                        status: 403,
+                        message: "Forbidden: The requested guild is not accessible."
+                    })
+                }
+                if (!guild) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The requested guild is not accessible."
+                })
+                let member;
+                try {
+                    member = await guild.members.fetch(data?.args.user.id || null)
+                } catch (e) {
+                    return res.status(403).send({
+                        status: 403,
+                        message: "Forbidden: The logged in member is not found in the guild."
+                    })
+                }
+                if (!member) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The logged in member is not found in the guild."
+                })
+                if (!member.permissions.has("ADMINISTRATOR")) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The logged in member doesn't have enough permissions."
+                })
+                let caidatData = await caidatSchema.findOne({ _id: guildId })
+                if (!caidatData) {
+                    console.log('hmm')
+                    return res.status(200).send({
+                        status: 200,
+                        log: "0"
+                    })
+                }
+                console.log(caidatData);
+                return res.status(200).send({
+                    status: 200,
+                    log: caidatData.logchannelid || "0"
                 })
             }
         },
