@@ -135,6 +135,61 @@ module.exports = {
             }
         },
 
+        // Information
+        {
+            method: "get",
+            path: "/info/guild/:guildId/channels",
+            callback: async (req, res) => {
+                const data = await authorizeUser(req, res)
+                const guildId = req.params.guildId;
+                if (!data || !`${data.status}`.startsWith("2")) return;
+                if (!guildId || isNaN(guildId)) return res.status(400).send({
+                    status: 400,
+                    message: 'Invalid form params: "guildId"'
+                })
+                let guild;
+                try {
+                    guild = await client.guilds.fetch(guildId)
+                } catch (e) {
+                    return res.status(403).send({
+                        status: 403,
+                        message: "Forbidden: The requested guild is not accessible."
+                    })
+                }
+                if (!guild) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The requested guild is not accessible."
+                })
+                let member;
+                try {
+                    member = await guild.members.fetch(data?.args.user.id || null)
+                } catch (e) {
+                    return res.status(403).send({
+                        status: 403,
+                        message: "Forbidden: The logged in member is not found in the guild."
+                    })
+                }
+                if (!member) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The logged in member is not found in the guild."
+                })
+                if (!member.permissions.has("ADMINISTRATOR")) return res.status(403).send({
+                    status: 403,
+                    message: "Forbidden: The logged in member doesn't have enough permissions."
+                })
+                const channels = client.channels.cache.map((c) => {
+                    return {
+                        name: c.name,
+                        id: c.id,
+                    }
+                });
+                return res.status(200).send({
+                    status: 200,
+                    data: channels
+                })
+            }
+        },
+
         // Features
         {
             method: "post",
