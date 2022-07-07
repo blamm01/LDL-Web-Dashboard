@@ -177,7 +177,7 @@ module.exports = {
                     status: 403,
                     message: "Forbidden: The logged in member doesn't have enough permissions."
                 })
-                const channels = client.channels.cache.map((c) => {
+                const channels = client.guilds.cache.get(guildId).channels.cache.map((c) => {
                     return {
                         name: c.name,
                         id: c.id,
