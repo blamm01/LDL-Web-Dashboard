@@ -5,6 +5,6 @@ module.exports = {
     "callback": "https://ldl-web.lamhanoi10.repl.co/api/auth/callback",
     "scope": ["identify", "guilds"],
     "tokenAge": 2629746000,
-    "domainLink": "https://ldl-web.lamhanoi10.repl.co",
+    "domainLink": "https://ldl-web-dashboard.herokuapp.com/",
     "prefix": "l!"
 }
