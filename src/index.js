@@ -45,7 +45,7 @@ module.exports = client;
 console.log("[Info] [Console] Connecting to services...")
 client.login(process.env.clientToken).then(() => {
   console.log("[Info] [Bot] Logged in to Discord")
-app.listen(config.port, () => console.log(`[Info] [Web] Listening to port ${config.port}`))
+app.listen(process.env.PORT || config.port || 3000, () => console.log(`[Info] [Web] Listening to port ${config.port}`))
 require("./database/index")
 requestHandler()
   app.use((req, res) => {
