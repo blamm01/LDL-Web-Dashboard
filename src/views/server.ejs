@@ -20,16 +20,19 @@
     <div id="main">
       <div id="sidebar">
         <div class="item_links">
-          <div class="item_link_div selected" id="sidebar__link--main">
-            <a href="#">Cài đặt chung</a>
+          <div onclick="location.href='#'" class="item_link_div selected" id="sidebar__link--main">
+            <i class="fa-solid fa-wrench item_link_div_icon"></i>
+            <a class="item_link_div_a" href="#">Cài đặt chung</a>
           </div>
 
-          <div class="item_link_div not_released" id="sidebar__link--automod">
-            <a href="#automod">Quản lý tự động</a>
+          <div onclick="location.href='#automod'" class="item_link_div" id="sidebar__link--automod">
+            <i class="fa-solid fa-robot item_link_div_icon"></i>
+            <a class="item_link_div_a" href="#automod">Quản lý tự động</a>
           </div>
 
-          <div class="item_link_div not_released" id="sidebar__link--logs">
-            <a href="#logs">Nhật kí điều khiển</a>
+          <div onclick="location.href='#logs'" class="item_link_div" id="sidebar__link--logs">
+            <i class="fa-solid fa-square-pen item_link_div_icon"></i>
+            <a class="item_link_div_a" href="#logs">Nhật kí điều khiển</a>
           </div>
         </div>
       </div>
@@ -462,6 +465,7 @@
     display: flex;
     position: relative;
     align-items: center;
+    cursor: pointer
   }
 
   #sidebar .item_links {
@@ -478,8 +482,9 @@
 
   #sidebar .item_link_div a {
     text-align: left;
-    font-size: 23px;
+    font-size: 21px;
     font-weight: bold;
+    margin-left: 10px;
   }
 
   #sidebar .item_link_div.selected {
@@ -489,7 +494,7 @@
     padding-bottom: 10px;
   }
 
-  #sidebar .item_link_div.selected::before {
+  /* #sidebar .item_link_div.selected::before {
     content: "";
     width: 10px;
     height: 10px;
@@ -498,6 +503,11 @@
     left: 10px;
     background-color: white;
     border-radius: 50%;
+  } */
+
+  #sidebar .item_link_div .item_link_div_icon {
+    position: absolute;
+    left: 10px;
   }
 
   #sidebar .item_link_div.selected a {
@@ -683,13 +693,48 @@
     }
   }
 
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: 1020px) {
     #main {
+      padding-inline: 0;
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    #main .interaction_area {
+      width: 100%;
+    }
+
+    #main .interaction_area .feature .about_text {
+      text-align: center;
+      font-size: 30px;
+    }
+
+    #main #sidebar,
+    #main .fake_sidebar {
+      width: 50px;
+    }
+
+    #main #sidebar .item_links {
       padding-inline: 10px;
     }
 
-    #main .text .heading {
-      font-size: 30px;
+    #main #sidebar .item_link_div {
+      padding-inline: 10px;
+      height: 30px;
+      justify-content: center;
+      display: flex;
+    }
+
+    #main #sidebar .item_link_div .item_link_div_a {
+      display: none
+    }
+
+    #main #sidebar .item_link_div .item_link_div_icon {
+      left: auto;
+    }
+
+    #main .interaction_area .update_input {
+      max-width: 70px;
     }
   }
 </style>
