@@ -20,15 +20,15 @@
     <div id="main">
       <div id="sidebar">
         <div class="item_links">
-          <div class="item selected">
+          <div class="item_link_div selected" id="sidebar__link--main">
             <a href="#">Cài đặt chung</a>
           </div>
 
-          <div class="item not_released">
+          <div class="item_link_div not_released" id="sidebar__link--automod">
             <a href="#automod">Quản lý tự động</a>
           </div>
 
-          <div class="item not_released">
+          <div class="item_link_div not_released" id="sidebar__link--logs">
             <a href="#logs">Nhật kí điều khiển</a>
           </div>
         </div>
@@ -52,21 +52,6 @@
                 maxlength="3"
               />
             </div>
-
-            <div class="logs setting">
-              <label for="logs_input" class="update_label">Kênh nhật kí:</label>
-              <!-- <input -->
-                <!-- type="text" -->
-                <!-- name="logs" -->
-                <!-- id="logs_input" -->
-                <!-- placeholder="Loading..." -->
-                <!-- class="update_input" -->
-                <!-- maxlength="3" -->
-              <!-- /> -->
-              <select name="logs" id="logs_select" class="update_select">
-                <option value="turn_off" selected>Tắt</option>
-              </select>
-            </div>
           </div>
         </div>
       </div>
@@ -85,6 +70,12 @@
           <div class="feature settings">
             <p class="about_text">Nhật kí điều khiển</p>
             <div class="dash"></div>
+            <div class="logs setting">
+              <label for="logs_input" class="update_label">Kênh nhật kí:</label>
+              <select name="logs" id="logs_select" class="update_select">
+                <option value="turn_off" selected>Tắt</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -129,27 +120,50 @@
 
     <script src="/js/defaults/app.js"></script>
     <script type="text/javascript">
-
       // Render Page
       renderPage(window.location.hash == "" ? "#" : window.location.hash);
 
       window.addEventListener("hashchange", () => {
         renderPage(window.location.hash == "" ? "#" : window.location.hash);
-      })
+      });
 
       async function renderPage(hash) {
-        if(!hash) hash = "#";
-        const interaction_area_div = document.querySelectorAll("#main .interaction_area");
+        if (!hash) hash = "#";
+
+        // Render interaction area
+        const interaction_area_div = document.querySelectorAll(
+          "#main .interaction_area"
+        );
         let hashPageName = hash == "#" ? "main" : hash.substring(1);
         interaction_area_div.forEach((interactionArea) => {
-          if(!interactionArea.classList.contains(hashPageName)) {
-            interactionArea.style["display"] = "none"
+          if (!interactionArea.classList.contains(hashPageName)) {
+            interactionArea.style["display"] = "none";
           } else {
-            interactionArea.style["display"] = "block"
+            interactionArea.style["display"] = "block";
           }
-        })
+        });
+
+        // Render sidebar links
+        const sidebar_link_div = document.querySelectorAll(
+          "#main #sidebar .item_links .item_link_div"
+        );
+        sidebar_link_div.forEach((div) => {
+          if (div.classList.contains("selected")) {
+            div.classList.remove("selected");
+          }
+        });
+
+        const sidebar_selected_link_div = document.querySelector(
+          `#main #sidebar .item_links #sidebar__link--${hashPageName}`
+        );
+        if (sidebar_selected_link_div) {
+          console.log(sidebar_selected_link_div);
+          if (!sidebar_selected_link_div.classList.contains("selected")) {
+            sidebar_selected_link_div.classList.add("selected");
+          }
+        }
       }
-      
+
       async function save(type) {
         if (type == "prefix") {
           const prefix = document.querySelector("#prefix_input").value;
@@ -178,11 +192,13 @@
             }
           } catch (err) {
             console.log(err);
-            alert(`Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`);
+            alert(
+              `Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`
+            );
           }
         } else if (type == "log") {
           let log = document.querySelector("#logs_select").value;
-          if(log == "turn_off") log = "0"
+          if (log == "turn_off") log = null;
 
           try {
             const res = await fetch(
@@ -208,7 +224,9 @@
             }
           } catch (err) {
             console.log(err);
-            alert(`Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`);
+            alert(
+              `Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`
+            );
           }
         } else {
           alert(
@@ -219,9 +237,9 @@
 
       async function get(type, placeholderRender = false) {
         let returnValue;
-        if(type == "channels") {
+        if (type == "channels") {
           let value;
-          let fetchedData= await fetch(
+          let fetchedData = await fetch(
             `<%= config.domainLink %>/api/info/guild/<%= guild.id %>/channels`,
             {
               method: "GET",
@@ -232,7 +250,7 @@
           );
           if (!fetchedData) return;
           fetchedData = await fetchedData.json();
-          returnValue = fetchedData.data || []
+          returnValue = fetchedData.data || [];
         } else if (type == "prefix") {
           let value;
           let data = await fetch(
@@ -279,8 +297,12 @@
             const channels = await get("channels");
             if (logSelect) {
               await channels.map((channel) => {
-                logSelect.innerHTML += `<option value="${channel.id}" id="log_channel_${channel.id}" ${channel.id == log ? 'selected' : ""}>${channel.name}</option>`
-              })
+                logSelect.innerHTML += `<option value="${
+                  channel.id
+                }" id="log_channel_${channel.id}" ${
+                  channel.id == log ? "selected" : ""
+                }>${channel.name}</option>`;
+              });
             }
           }
 
@@ -295,7 +317,7 @@
 
       // Render placeholder
       get("prefix", true);
-      get("log", true)
+      get("log", true);
 
       // Detect changes
       let changesArray = [];
@@ -325,7 +347,7 @@
         const logSelect = document.querySelector("#logs_select");
         if (logSelect) {
           logSelect.addEventListener("change", () => {
-            const logSelectValue = logSelect.value ? "turn_off" : "0"
+            const logSelectValue = logSelect.value ? "turn_off" : "0";
             if (logSelectValue == channelId) {
               console.log(true);
               if (changesArray.find((v) => v.type == "log"))
@@ -390,24 +412,29 @@
         }
 
         if (saveChanges == true && revertChanges == false) {
-          const saveChangesButton = document.querySelector("#saveChangesBtn_makeChanges_snackbar")
-          console.log(saveChangesButton)
-          if(saveChangesButton) {
-            saveChangesButton.innerText = "..."
+          const saveChangesButton = document.querySelector(
+            "#saveChangesBtn_makeChanges_snackbar"
+          );
+          console.log(saveChangesButton);
+          if (saveChangesButton) {
+            saveChangesButton.innerText = "...";
           }
-          const mapChanges = () => new Promise(async(ful) => {
-            await changesArray.map(async(change) => {
-            if (!change.type || !validChanges.includes(change.type)) return;
-            await save(change.type);
-            changesArray.filter((v) => v.type !== change.type);
-            await get(change.type, true);
-            ful()
-          });
-          })
+          const mapChanges = () =>
+            new Promise(async (ful) => {
+              await changesArray.map(async (change) => {
+                if (!change.type || !validChanges.includes(change.type)) return;
+                await save(change.type);
+                changesArray.filter((v) => v.type !== change.type);
+                await get(change.type, true);
+                ful();
+              });
+            });
           mapChanges().then(() => {
-            alert("Cập nhật thành công dữ liệu của máy chủ này! Vui lòng nhấn OK để tải lại trang");
+            alert(
+              "Cập nhật thành công dữ liệu của máy chủ này! Vui lòng nhấn OK để tải lại trang"
+            );
             window.location.reload();
-          })
+          });
         } else if (saveChanges == false && revertChanges == true) {
           changesArray = [];
           window.location.reload();
@@ -425,10 +452,10 @@
   }
 
   #sidebar {
-    overflow: scroll
+    overflow: scroll;
   }
 
-  #sidebar .item {
+  #sidebar .item_link_div {
     margin: 20px 0;
     padding-inline: 30px;
     justify-content: left;
@@ -441,28 +468,28 @@
     padding-inline: 20px;
   }
 
-  #sidebar .item:hover a {
-    color: red
+  #sidebar .item_link_div:hover a {
+    color: red;
   }
 
-  #sidebar .item.not_released a {
-    color: grey !important;
-  }
+  /* #sidebar .item_link_div.not_released a {
+    color: white !important;
+  } */
 
-  #sidebar .item a {
+  #sidebar .item_link_div a {
     text-align: left;
-    font-size: 24px;
+    font-size: 23px;
     font-weight: bold;
   }
 
-  #sidebar .item.selected {
+  #sidebar .item_link_div.selected {
     border-radius: 10px;
     background-color: #2c2f33;
     padding-top: 10px;
     padding-bottom: 10px;
   }
 
-  #sidebar .item.selected::before {
+  #sidebar .item_link_div.selected::before {
     content: "";
     width: 10px;
     height: 10px;
@@ -473,7 +500,7 @@
     border-radius: 50%;
   }
 
-  #sidebar .item.selected a {
+  #sidebar .item_link_div.selected a {
     color: white !important;
   }
 
@@ -547,61 +574,23 @@
     padding-top: 20px;
   }
 
-  #main .servers {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #main .servers .server {
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-    border: 3px solid #ff0000;
-    padding: 30px;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-
-  #main .server img {
-    width: 175px;
-    margin-bottom: 20px;
-  }
-
-  #main .server span {
-    font-size: 30px;
-    margin-bottom: 20px;
-    font-weight: bold;
-  }
-
-  #main .server p {
-    padding: 10px;
-    font-size: 20px;
-    font-weight: bold;
-    background-color: aqua;
-    border: 1px solid none;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-
-  #main .feature .about_text {
+  #main .interaction_area .feature .about_text {
     font-weight: bold;
     text-align: center;
     font-size: 50px;
   }
 
-  #main .feature {
+  #main .interaction_area .feature {
     text-align: left;
   }
 
-  #main .setting {
+  #main .interaction_area .setting {
     align-items: center;
     display: flex;
     margin: 30px 0;
   }
 
-  #main .setting .updateBtn {
+  #main .interaction_area .setting .updateBtn {
     padding: 5px;
     border-radius: 5px;
     background-color: red;
@@ -610,7 +599,7 @@
     cursor: pointer;
   }
 
-  #main .setting .update_input {
+  #main .interaction_area .setting .update_input {
     padding: 15px;
     background-color: #4a4d54;
     width: 250px;
@@ -620,17 +609,33 @@
     border-radius: 10px;
   }
 
-  #main .setting .update_label {
+  #main .interaction_area .setting .update_label {
     font-size: 30px;
     font-weight: bold;
   }
 
-  #main .setting .update_select {
+  #main .interaction_area .setting .update_select {
     width: fit-content;
-    min-width: fit-content;
+    min-width: 200px;
     padding: 10px;
     height: auto;
     margin: 0 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #4a4d54;
+    color: white;
+    font-weight: bold;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: 98%;
+    background-size: 30px;
+    background-position-y: 4px;
+  }
+
+  #main .interaction_area .setting .update_select option {
+    color: white;
+    font-weight: bold;
   }
 
   /* Snackbar Animation */
