@@ -20,17 +20,29 @@
     <div id="main">
       <div id="sidebar">
         <div class="item_links">
-          <div onclick="location.href='#'" class="item_link_div selected" id="sidebar__link--main">
+          <div
+            onclick="location.href='#'"
+            class="item_link_div selected"
+            id="sidebar__link--main"
+          >
             <i class="fa-solid fa-wrench item_link_div_icon"></i>
             <a class="item_link_div_a" href="#">Cài đặt chung</a>
           </div>
 
-          <div onclick="location.href='#automod'" class="item_link_div" id="sidebar__link--automod">
+          <div
+            onclick="location.href='#automod'"
+            class="item_link_div"
+            id="sidebar__link--automod"
+          >
             <i class="fa-solid fa-robot item_link_div_icon"></i>
             <a class="item_link_div_a" href="#automod">Quản lý tự động</a>
           </div>
 
-          <div onclick="location.href='#logs'" class="item_link_div" id="sidebar__link--logs">
+          <div
+            onclick="location.href='#logs'"
+            class="item_link_div"
+            id="sidebar__link--logs"
+          >
             <i class="fa-solid fa-square-pen item_link_div_icon"></i>
             <a class="item_link_div_a" href="#logs">Nhật kí điều khiển</a>
           </div>
@@ -89,12 +101,13 @@
         id="makeChanges_snackbar"
         style="width: 80%; border-radius: 10px; height: 70px"
       >
-        <p
+        <div
           class="makeChanges_text"
           style="font-size: 25px; font-weight: bold; line-height: 0"
         >
-          Đồng chí có muốn lưu lại thay đổi?
-        </p>
+          <p class="pc_makeChanges_text">Đồng chí có muốn lưu lại thay đổi?</p>
+          <p class="mobile_makeChanges_text">Lưu thay đổi?</p>
+        </div>
         <div
           class="makeChanges_buttons"
           style="border-radius: 10px; padding: 10px; border: none"
@@ -465,7 +478,7 @@
     display: flex;
     position: relative;
     align-items: center;
-    cursor: pointer
+    cursor: pointer;
   }
 
   #sidebar .item_links {
@@ -557,6 +570,14 @@
     font-weight: bold;
     padding-inline: 50px;
     cursor: pointer;
+  }
+
+  #snackbars #makeChanges_snackbar .makeChanges_text .mobile_makeChanges_text {
+    display: none;
+  }
+
+  #snackbars #makeChanges_snackbar .makeChanges_text .pc_makeChanges_text {
+    display: block;
   }
 
   #main {
@@ -725,7 +746,7 @@
     }
 
     #main #sidebar .item_link_div .item_link_div_a {
-      display: none
+      display: none;
     }
 
     #main #sidebar .item_link_div .item_link_div_icon {
@@ -738,6 +759,30 @@
 
     #main .interaction_area .update_input {
       max-width: 70px;
+    }
+
+    #snackbars #makeChanges_snackbar {
+      flex-direction: column;
+      height: auto !important;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_text {
+      margin-top: 5px;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_buttons {
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_text .mobile_makeChanges_text {
+      display: block;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_text .pc_makeChanges_text {
+      display: none;
     }
   }
 </style>
