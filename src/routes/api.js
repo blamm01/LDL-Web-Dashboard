@@ -357,8 +357,8 @@ module.exports = {
                     status: 403,
                     message: "Forbidden: The logged in member doesn't have enough permissions."
                 })
-                let log = `${req.body?.log}`
-                if(!log) log == "0";
+                let log = req.body?.log
+                if(!log || typeof log !== "string") log = null
                 let caidatData = await caidatSchema.findOne({ _id: guildId })
                 if (!caidatData) {
                     caidatData = await caidatSchema.create({
@@ -371,7 +371,7 @@ module.exports = {
                         data: caidatData
                     })
                 }
-                caidatData.logchannelid = log
+                else caidatData.logchannelid = log
                 try {
                     await caidatData.save()
                 } catch(err) {
