@@ -53,7 +53,8 @@ a {
     border-radius: 15px;
     position: relative;
     border: none;
-  cursor: pointer
+  cursor: pointer;
+    position: relative;
 }
 
 .on_off_btn.btnTurnOff {
