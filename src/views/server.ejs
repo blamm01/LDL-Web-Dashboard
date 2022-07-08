@@ -219,7 +219,21 @@
 
       async function get(type, placeholderRender = false) {
         let returnValue;
-        if (type == "prefix") {
+        if(type == "channels") {
+          let value;
+          let fetchedData= await fetch(
+            `<%= config.domainLink %>/api/info/guild/<%= guild.id %>/channels`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `<%= req.cookies.token %>`,
+              },
+            }
+          );
+          if (!fetchedData) return;
+          fetchedData = await fetchedData.json();
+          returnValue = fetchedData.data || []
+        } else if (type == "prefix") {
           let value;
           let data = await fetch(
             `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/prefix`,
@@ -260,13 +274,15 @@
           const log = data.log || "0";
 
           // Replace placeholder
-          // if (placeholderRender) {
-          //   const prefixInput = document.querySelector("#");
-          //   if (prefixInput) {
-          //     prefixInput.placeholder = prefix;
-          //     prefixInput.value = prefix;
-          //   }
-          // }
+          if (placeholderRender) {
+            const logSelect = document.querySelector("#logs_select");
+            const channels = await get("channels");
+            if (logSelect) {
+              await channels.map((channel) => {
+                logSelect.innerHTML += `<option value="${channel.id}" id="log_channel_${channel.id}" ${channel.id == log ? 'selected' : ""}>${channel.name}</option>`
+              })
+            }
+          }
 
           returnValue = log;
         } else {
@@ -279,6 +295,7 @@
 
       // Render placeholder
       get("prefix", true);
+      get("log", true)
 
       // Detect changes
       let changesArray = [];
@@ -304,6 +321,27 @@
         }
       });
 
+      get("log").then((channelId) => {
+        const logSelect = document.querySelector("#logs_select");
+        if (logSelect) {
+          logSelect.addEventListener("change", () => {
+            const logSelectValue = logSelect.value ? "turn_off" : "0"
+            if (logSelectValue == channelId) {
+              console.log(true);
+              if (changesArray.find((v) => v.type == "log"))
+                changesArray.filter((v) => v.type !== "log");
+              return;
+            }
+            changesArray.push({
+              type: "log",
+              old: channelId,
+            });
+
+            changesDetected(false, false, true);
+          });
+        }
+      });
+
       async function changesDetected(
         saveChanges = true,
         revertChanges = false,
@@ -312,7 +350,7 @@
         const makeChanges_snackbar = document.querySelector(
           "#makeChanges_snackbar"
         );
-        const validChanges = ["prefix"];
+        const validChanges = ["prefix", "log"];
 
         if (showMakeChanges) {
           if (changesArray.length <= 0) {
