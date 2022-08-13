@@ -6,6 +6,7 @@ import LoadBot from './configuration/bot';
 import * as cookieParser from 'cookie-parser';
 import * as path from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import config from '../config';
 
 LoadMongo();
 const bot = LoadBot();
@@ -20,7 +21,7 @@ async function bootstrap() {
   app.setBaseViewsDir(path.join(__dirname, 'views'));
   app.setViewEngine('ejs');
 
-  await app.listen(3000);
+  await app.listen(config.PORT);
 }
 
 bootstrap();
