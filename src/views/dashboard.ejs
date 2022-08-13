@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lân Đông Lào</title>
+    <link rel="stylesheet" href="/css/defaults/style.css" />
+    <link rel="stylesheet" href="/css/defaults/responsive.css" />
+    <link rel="shortcut icon" href="/images/icon.png" type="image/x-icon" />
+    <script
+      src="https://kit.fontawesome.com/dd4ab22b06.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <%-include("./partials/header.ejs")%>
+
+    <div id="main">
+      <div class="text">
+        <p class="heading">Bảng điều khiển (Thử nghiệm)</p>
+      </div>
+
+      <div class="servers">
+        <!-- <div class="server">
+                    <img src="/images/landonglao.png" alt="">
+                    <span>Lân Đông Lào</span>
+                    <p class="go_to_dash_btn">Truy cập</p>
+                </div> -->
+        <% data.guilds.map((guild) => { %>
+        <% guild.slicedName = guild.name.length <= 14 ? guild.name : guild.name.slice(0, 14) + "..." %>
+        <div onclick="location.href='/servers/<%= guild.id %>'" class="server" id="<%= guild.id %>">
+          <img src="<%= guild.avatar || '/images/noavatar.png' %>" alt="/images/noavatar.png" />
+          <span><%= guild.slicedName %></span>
+          <p class="go_to_dash_btn" id="accessBtn_<%= guild.id %>">Truy cập</p>
+        </div>
+        <% }) %>
+        <% if(data.guilds.length == 0) { %>
+          <p style="margin-bottom: 100px; font-size: 24px;">Không tìm thấy bất kì máy chủ nào! Hãy đảm bảo bạn có quyền quản trị và tôi ở trong máy chủ đó</p>
+        <% } %>
+      </div>
+    </div>
+
+    <%-include("./partials/footer.ejs")%>
+
+    <script src="/js/defaults/app.js"></script>
+  </body>
+</html>
+
+<style>
+  #main {
+    padding-inline: 30px !important;
+    text-align: center;
+  }
+
+  #main .text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 50px;
+  }
+
+  #main .text .heading {
+    font-size: 40px;
+    font-family: Calibri, sans-serif;
+    margin-bottom: 40px;
+    font-weight: bold;
+  }
+
+  #main .servers {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #main .servers .server {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    background-color: #202225;
+    padding: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    align-items: center;
+    max-width: 266px;
+    min-width: 266px;
+  }
+
+  #main .server img {
+    width: 175px;
+    margin-bottom: 20px;
+    border: 8px solid #cd130b;
+    border-radius: 50%;
+  }
+
+  #main .server span {
+    font-size: 30px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  #main .server p {
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #cd130b;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 800px) {
+    #main {
+      padding-inline: 10px;
+    }
+
+    #main .text .heading {
+      font-size: 30px;
+    }
+  }
+</style>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lân Đông Lào</title>
+    <link rel="stylesheet" href="/css/defaults/style.css" />
+    <link rel="stylesheet" href="/css/defaults/responsive.css" />
+    <link
+      rel="shortcut icon"
+      href="/images/icon.png"
+      type="image/x-icon"
+    />
+    <script
+      src="https://kit.fontawesome.com/dd4ab22b06.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <%-include("./partials/header.ejs")%>
+
+    <div id="main">
+      <div class="privacy_policy">
+        <h5 class="heading">Chính sách bảo mật</h5>
+        <p class="desc">
+          Việc sử dụng ứng dụng ("bot") này trong máy chủ sẽ yêu cầu việc thu
+          thập thông tin ("dữ liệu") của một số người dùng nhất định. Dữ liệu ấy
+          sẽ bao gồm ID của người dùng cũng như máy chủ Discord. Việc sử dụng
+          bot được xem như là sự chấp thuận chính sách bảo mật này.
+        </p>
+        <ul class="pp_sections">
+          <li class="pp_section">
+            <h4 class="title">Truy cập vào dữ liệu</h4>
+            <p class="desc">
+              Truy cập vào dữ liệu chỉ được cho phép cho người phát triển bot,
+              và chỉ trong phạm vi được yêu cầu để phát triển, thử nghiệm và
+              triển khai các tính năng cho bot. Những dữ liệu này sẽ không được
+              bán, cung cấp hay chia sẻ cho các bên thứ ba trừ khi theo yêu cầu
+              của pháp luật.
+            </p>
+          </li>
+          <li class="pp_section">
+            <h4 class="title">Lưu trữ dữ liệu</h4>
+            <p class="desc">
+              Dữ liệu sẽ được lưu trữ trên cơ sở dữ liệu MongoDB. Cơ sở dữ liệu
+              này được bảo mật để ngăn chặn sự truy cập từ bên ngoài, mặc dù vậy
+              không có bảo đảm nào cung cấp và chủ bot sẽ không chịu trách nhiệm
+              pháp lý nào về việc vi phạm dữ liệu do cố ý. Trong trường hợp truy
+              cập dữ liệu trái phép, người dùng sẽ được thông báo thông qua ứng
+              dụng ngoài của Discord.
+            </p>
+          </li>
+          <li class="pp_section">
+            <h4 class="title">Quyền của người dùng</h4>
+            <p class="desc">
+              Người dùng luôn có quyền xem dữ liệu được lưu trữ về tài khoản
+              Discord của mình thông qua
+              <a href="https://discord.gg/8592Gbk">máy chủ Discord của bot</a>.
+              Người dùng cũng có thể yêu cầu xóa dữ liệu của mình.
+            </p>
+          </li>
+          <li class="pp_section">
+            <h4 class="title">
+              Đối với những người dùng thấp hơn tuổi cho phép
+            </h4>
+            <p class="desc">
+              Việc sử dụng bot không được phép đối với trẻ vị thành niên dưới 13
+              tuổi hoặc dưới độ tuổi được sự đồng ý của pháp luật đối với quốc
+              gia của họ. Điều này tuân theo
+              <a href="https://discord.com/tos"
+                >Điều khoản dịch vụ của Discord</a
+              >. Không có thông tin sẽ được cố ý lưu trữ từ một người dùng chưa
+              đủ tuổi. Nếu phát hiện ra người dùng chưa đủ tuổi, tôi sẽ thực
+              hiện mọi hành động cần thiết để xóa dữ liệu đã lưu trữ.
+            </p>
+          </li>
+          <li class="pp_section">
+            <h4 class="title">Câu hỏi</h4>
+            <p class="desc">
+              Nếu bạn có thắc mắc gì về thông tin được lưu trữ từ tài khoản của
+              bạn, vui lòng liên lạc với nâL#2147.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <%-include("./partials/footer.ejs")%>
+
+    <script src="/js/defaults/app.js"></script>
+  </body>
+</html>
+
+<style>
+  a {
+    color: red;
+    font-weight: bold;
+  }
+
+  #main .privacy_policy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-inline: 100px;
+    text-align: justify;
+    margin-top: 100px;
+    margin-bottom: 75px;
+    font-size: 20px;
+  }
+
+  #main .privacy_policy .heading {
+    font-size: 50px;
+    font-family: Calibri, sans-serif;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  #main .privacy_policy .desc {
+    font-size: 20px;
+    font-family: Calibri, sans-serif;
+    margin-bottom: 40px;
+  }
+
+  #main .pp_sections .pp_section .title {
+    font-size: 28px;
+  }
+
+  @media only screen and (max-width: 800px) {
+    #main {
+      padding-inline: 0;
+      text-align: center;
+    }
+
+    #main .privacy_policy .heading {
+      font-size: 35px;
+    }
+
+    #main .privacy_policy {
+      padding: 30px;
+    }
+
+    #main .pp_section .title {
+      font-size: 18px;
+    }
+
+    #main .pp_section .desc {
+      font-size: 16px;
+    }
+  }
+</style>

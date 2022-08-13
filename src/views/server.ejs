@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lân Đông Lào</title>
+    <link rel="stylesheet" href="/css/defaults/style.css" />
+    <link rel="stylesheet" href="/css/defaults/responsive.css" />
+    <link rel="shortcut icon" href="/images/icon.png" type="image/x-icon" />
+    <script
+      src="https://kit.fontawesome.com/dd4ab22b06.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <%- include("./partials/header.ejs") %>
+
+    <div id="main">
+      <div id="sidebar">
+        <div class="item_links">
+          <div
+            onclick="location.href='#'"
+            class="item_link_div selected"
+            id="sidebar__link--main"
+          >
+            <i class="fa-solid fa-wrench item_link_div_icon"></i>
+            <a class="item_link_div_a" href="#">Cài đặt chung</a>
+          </div>
+
+          <div
+            onclick="location.href='#automod'"
+            class="item_link_div"
+            id="sidebar__link--automod"
+          >
+            <i class="fa-solid fa-robot item_link_div_icon"></i>
+            <a class="item_link_div_a" href="#automod">Quản lý tự động</a>
+          </div>
+
+          <div
+            onclick="location.href='#logs'"
+            class="item_link_div"
+            id="sidebar__link--logs"
+          >
+            <i class="fa-solid fa-square-pen item_link_div_icon"></i>
+            <a class="item_link_div_a" href="#logs">Nhật kí điều khiển</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fake_sidebar"></div>
+
+      <div class="interaction_area main">
+        <div class="features">
+          <div class="feature settings">
+            <p class="about_text">Cài đặt chung</p>
+            <div class="dash"></div>
+            <div class="prefix setting">
+              <label for="prefix_input" class="update_label">Prefix:</label>
+              <input
+                type="text"
+                name="prefix"
+                id="prefix_input"
+                placeholder="Loading..."
+                class="update_input"
+                maxlength="3"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="interaction_area automod">
+        <div class="features">
+          <div class="feature settings">
+            <p class="about_text">Quản lý tự động</p>
+            <div class="dash"></div>
+            <div class="caps setting">
+              <label id="caps_label" class="update_label" for="caps_onOffButton">Từ ngữ in hoa:</label>
+              <button type="button" class="on_off_btn" id="caps_onOffButton"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="interaction_area logs">
+        <div class="features">
+          <div class="feature settings">
+            <p class="about_text">Nhật kí điều khiển</p>
+            <div class="dash"></div>
+            <div class="logs setting">
+              <label for="logs_input" class="update_label">Kênh nhật kí:</label>
+              <select name="logs" id="logs_select" class="update_select">
+                <option value="turn_off" selected>Tắt</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="snackbars">
+      <div
+        id="makeChanges_snackbar"
+        style="width: 80%; border-radius: 10px; height: 70px"
+      >
+        <div
+          class="makeChanges_text"
+          style="font-size: 25px; font-weight: bold; line-height: 0"
+        >
+          <p class="pc_makeChanges_text">Đồng chí có muốn lưu lại thay đổi?</p>
+          <p class="mobile_makeChanges_text">Lưu thay đổi?</p>
+        </div>
+        <div
+          class="makeChanges_buttons"
+          style="border-radius: 10px; padding: 10px; border: none"
+        >
+          <button
+            type="button"
+            class="revertChanges makeChanges_btn"
+            style="background: none"
+            onclick="changesDetected(false, true)"
+            id="revertChangesBtn_makeChanges_snackbar"
+          >
+            Không
+          </button>
+          <button
+            type="button"
+            class="saveChanges makeChanges_btn"
+            style="background-color: #da251d"
+            onclick="changesDetected(true, false)"
+            id="saveChangesBtn_makeChanges_snackbar"
+          >
+            Có
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/defaults/app.js"></script>
+    <script type="text/javascript">
+      // Render Page
+      renderPage(window.location.hash == "" ? "#" : window.location.hash);
+
+      window.addEventListener("hashchange", () => {
+        renderPage(window.location.hash == "" ? "#" : window.location.hash);
+      });
+
+      async function renderPage(hash) {
+        if (!hash) hash = "#";
+
+        // Render interaction area
+        const interaction_area_div = document.querySelectorAll(
+          "#main .interaction_area"
+        );
+        let hashPageName = hash == "#" ? "main" : hash.substring(1);
+        interaction_area_div.forEach((interactionArea) => {
+          if (!interactionArea.classList.contains(hashPageName)) {
+            interactionArea.style["display"] = "none";
+          } else {
+            interactionArea.style["display"] = "block";
+          }
+        });
+
+        // Render sidebar links
+        const sidebar_link_div = document.querySelectorAll(
+          "#main #sidebar .item_links .item_link_div"
+        );
+        sidebar_link_div.forEach((div) => {
+          if (div.classList.contains("selected")) {
+            div.classList.remove("selected");
+          }
+        });
+
+        const sidebar_selected_link_div = document.querySelector(
+          `#main #sidebar .item_links #sidebar__link--${hashPageName}`
+        );
+        if (sidebar_selected_link_div) {
+          console.log(sidebar_selected_link_div);
+          if (!sidebar_selected_link_div.classList.contains("selected")) {
+            sidebar_selected_link_div.classList.add("selected");
+          }
+        }
+      }
+
+      async function save(type) {
+        if (type == "prefix") {
+          const prefix = document.querySelector("#prefix_input").value;
+
+          try {
+            const res = await fetch(
+              `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/general/prefix`,
+              {
+                method: "POST",
+                headers: {
+                  authorization: `<%= req.cookies.token %>`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  prefix: prefix,
+                }),
+              }
+            );
+            const fetchedData = await res.json();
+            if (!`${fetchedData.status}`.startsWith("2")) {
+              return alert(
+                `Lỗi khi cập nhật dữ liệu: ${
+                  fetchedData.message || "Không biết"
+                } (Mã lỗi: ${fetchedData.status || res.status || "N/A"})`
+              );
+            }
+          } catch (err) {
+            console.log(err);
+            alert(
+              `Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`
+            );
+          }
+        } else if (type == "log") {
+          let log = document.querySelector("#logs_select").value;
+          if (log == "turn_off") log = null;
+
+          try {
+            const res = await fetch(
+              `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/logs/logchannel`,
+              {
+                method: "POST",
+                headers: {
+                  authorization: `<%= req.cookies.token %>`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  log: log,
+                }),
+              }
+            );
+            const fetchedData = await res.json();
+            if (!`${fetchedData.status}`.startsWith("2")) {
+              return alert(
+                `Lỗi khi cập nhật dữ liệu: ${
+                  fetchedData.message || "Không biết"
+                } (Mã lỗi: ${fetchedData.status || res.status || "N/A"})`
+              );
+            }
+          } catch (err) {
+            console.log(err);
+            alert(
+              `Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`
+            );
+          }
+        } else {
+          alert(
+            "Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang."
+          );
+        }
+      }
+
+      async function get(type, placeholderRender = false) {
+        let returnValue;
+        if (type == "channels") {
+          let value;
+          let fetchedData = await fetch(
+            `<%= config.domainLink %>/api/info/guild/<%= guild.id %>/channels`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `<%= req.cookies.token %>`,
+              },
+            }
+          );
+          if (!fetchedData) return;
+          fetchedData = await fetchedData.json();
+          returnValue = fetchedData.data || [];
+        } else if (type == "prefix") {
+          let value;
+          let data = await fetch(
+            `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/general/prefix`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `<%= req.cookies.token %>`,
+              },
+            }
+          );
+          if (!data) return;
+          data = await data.json();
+          const prefix = data.prefix || `<%= config.prefix %>`;
+
+          // Replace placeholder
+          if (placeholderRender) {
+            const prefixInput = document.querySelector("#prefix_input");
+            if (prefixInput) {
+              prefixInput.placeholder = prefix;
+              prefixInput.value = prefix;
+            }
+          }
+
+          returnValue = prefix;
+        } else if (type == "log") {
+          let value;
+          let data = await fetch(
+            `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/logs/logchannel`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `<%= req.cookies.token %>`,
+              },
+            }
+          );
+          if (!data) return;
+          data = await data.json();
+          const log = data.log || "0";
+
+          // Replace placeholder
+          if (placeholderRender) {
+            const logSelect = document.querySelector("#logs_select");
+            const channels = await get("channels");
+            if (logSelect) {
+              await channels.map((channel) => {
+                logSelect.innerHTML += `<option value="${
+                  channel.id
+                }" id="log_channel_${channel.id}" ${
+                  channel.id == log ? "selected" : ""
+                }>${channel.name}</option>`;
+              });
+            }
+          }
+
+          returnValue = log;
+        } else {
+          alert(
+            "Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang."
+          );
+        }
+        return returnValue;
+      }
+
+      // Render placeholder
+      get("prefix", true);
+      get("log", true);
+
+      // Detect changes
+      let changesArray = [];
+
+      get("prefix").then((prefix) => {
+        const prefixInput = document.querySelector("#prefix_input");
+        if (prefixInput) {
+          prefixInput.addEventListener("change", () => {
+            const prefixInputValue = prefixInput.value;
+            if (prefixInputValue == prefix) {
+              console.log(true);
+              if (changesArray.find((v) => v.type == "prefix"))
+                changesArray.filter((v) => v.type !== "prefix");
+              return;
+            }
+            changesArray.push({
+              type: "prefix",
+              old: prefix,
+            });
+
+            changesDetected(false, false, true);
+          });
+        }
+      });
+
+      get("log").then((channelId) => {
+        const logSelect = document.querySelector("#logs_select");
+        if (logSelect) {
+          logSelect.addEventListener("change", () => {
+            const logSelectValue = logSelect.value ? "turn_off" : "0";
+            if (logSelectValue == channelId) {
+              console.log(true);
+              if (changesArray.find((v) => v.type == "log"))
+                changesArray.filter((v) => v.type !== "log");
+              return;
+            }
+            changesArray.push({
+              type: "log",
+              old: channelId,
+            });
+
+            changesDetected(false, false, true);
+          });
+        }
+      });
+
+      async function changesDetected(
+        saveChanges = true,
+        revertChanges = false,
+        showMakeChanges = false
+      ) {
+        const makeChanges_snackbar = document.querySelector(
+          "#makeChanges_snackbar"
+        );
+        const validChanges = ["prefix", "log"];
+
+        if (showMakeChanges) {
+          if (changesArray.length <= 0) {
+            if (makeChanges_snackbar.classList.contains("show")) {
+              makeChanges_snackbar.classList.remove("show");
+              makeChanges_snackbar.classList.add("hide");
+              setTimeout(() => {
+                makeChanges_snackbar.classList.remove("hide");
+              }, 450);
+            }
+            if (makeChanges_snackbar.classList.contains("hide")) {
+              makeChanges_snackbar.classList.remove("hide");
+            }
+          } else {
+            if (!makeChanges_snackbar.classList.contains("show")) {
+              if (makeChanges_snackbar.classList.contains("hide")) {
+                makeChanges_snackbar.classList.remove("hide");
+              }
+              makeChanges_snackbar.classList.add("show");
+            }
+          }
+          return;
+        }
+
+        if (changesArray.length <= 0) {
+          if (makeChanges_snackbar.classList.contains("show")) {
+            makeChanges_snackbar.classList.remove("show");
+            makeChanges_snackbar.classList.add("hide");
+            setTimeout(() => {
+              makeChanges_snackbar.classList.remove("hide");
+            }, 450);
+          }
+          if (makeChanges_snackbar.classList.contains("hide")) {
+            makeChanges_snackbar.classList.remove("hide");
+          }
+          return;
+        }
+
+        if (saveChanges == true && revertChanges == false) {
+          const saveChangesButton = document.querySelector(
+            "#saveChangesBtn_makeChanges_snackbar"
+          );
+          console.log(saveChangesButton);
+          if (saveChangesButton) {
+            saveChangesButton.innerText = "...";
+          }
+          const mapChanges = () =>
+            new Promise(async (ful) => {
+              await changesArray.map(async (change) => {
+                if (!change.type || !validChanges.includes(change.type)) return;
+                await save(change.type);
+                changesArray.filter((v) => v.type !== change.type);
+                await get(change.type, true);
+                ful();
+              });
+            });
+          mapChanges().then(() => {
+            alert(
+              "Cập nhật thành công dữ liệu của máy chủ này! Vui lòng nhấn OK để tải lại trang"
+            );
+            window.location.reload();
+          });
+        } else if (saveChanges == false && revertChanges == true) {
+          changesArray = [];
+          window.location.reload();
+        } else {
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    --sidebar-width: 300px;
+    --sidebar-background-color: #202225;
+  }
+
+  #sidebar {
+    overflow: scroll;
+  }
+
+  #sidebar .item_link_div {
+    margin: 20px 0;
+    padding-inline: 30px;
+    justify-content: left;
+    display: flex;
+    position: relative;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  #sidebar .item_links {
+    padding-inline: 20px;
+  }
+
+  #sidebar .item_link_div:hover a {
+    color: red;
+  }
+
+  /* #sidebar .item_link_div.not_released a {
+    color: white !important;
+  } */
+
+  #sidebar .item_link_div a {
+    text-align: left;
+    font-size: 21px;
+    font-weight: bold;
+    margin-left: 10px;
+  }
+
+  #sidebar .item_link_div.selected {
+    border-radius: 10px;
+    background-color: #2c2f33;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  /* #sidebar .item_link_div.selected::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    color: white;
+    left: 10px;
+    background-color: white;
+    border-radius: 50%;
+  } */
+
+  #sidebar .item_link_div .item_link_div_icon {
+    position: absolute;
+    left: 10px;
+  }
+
+  #sidebar .item_link_div.selected a {
+    color: white !important;
+  }
+
+  #snackbars {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #snackbars #makeChanges_snackbar {
+    visibility: hidden;
+    bottom: 30px;
+    position: fixed;
+    background-color: #555860;
+    justify-content: space-between;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    width: 600px;
+    text-align: center;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.4);
+  }
+
+  #snackbars #makeChanges_snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.45s;
+    animation: fadein 0.45s;
+  }
+
+  #snackbars #makeChanges_snackbar.hide {
+    visibility: visible;
+    -webkit-animation: fadeout 0.45s;
+    animation: fadeout 0.45s;
+  }
+
+  #snackbars .makeChanges_btn {
+    font-size: 20px;
+    border-radius: 10px;
+    /* background: none; */
+    padding: 10px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding-inline: 50px;
+    cursor: pointer;
+  }
+
+  #snackbars #makeChanges_snackbar .makeChanges_text .mobile_makeChanges_text {
+    display: none;
+  }
+
+  #snackbars #makeChanges_snackbar .makeChanges_text .pc_makeChanges_text {
+    display: block;
+  }
+
+  #main {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+  }
+
+  #main #sidebar {
+    background-color: var(--sidebar-background-color);
+    width: var(--sidebar-width);
+    overflow: hidden;
+    height: 100%;
+    position: fixed;
+  }
+
+  #main .fake_sidebar {
+    width: var(--sidebar-width);
+  }
+
+  #main .interaction_area {
+    padding-inline: 30px;
+    width: calc(100% - var(--sidebar-width));
+    padding-top: 20px;
+  }
+
+  #main .interaction_area .feature .about_text {
+    font-weight: bold;
+    text-align: center;
+    font-size: 50px;
+  }
+
+  #main .interaction_area .feature {
+    text-align: left;
+  }
+
+  #main .interaction_area .setting {
+    align-items: center;
+    display: flex;
+    margin: 30px 0;
+  }
+
+  #main .interaction_area .setting .updateBtn {
+    background-color: red;
+    border-color: red;
+    color: white;
+    cursor: pointer;
+  }
+
+  #main .interaction_area .setting .update_input {
+    padding: 15px;
+    background-color: #4a4d54;
+    width: 250px;
+    margin: 0 10px;
+    border: none;
+    color: white;
+    border-radius: 10px;
+  }
+
+  #main .interaction_area .setting .update_label {
+    font-size: 30px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  #main .interaction_area .setting .update_select {
+    width: fit-content;
+    min-width: 200px;
+    padding: 10px;
+    height: auto;
+    border: none;
+    border-radius: 10px;
+    background-color: #4a4d54;
+    color: white;
+    font-weight: bold;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: 98%;
+    background-size: 30px;
+    background-position-y: 4px;
+  }
+
+  #main .interaction_area .setting .update_select option {
+    color: white;
+    font-weight: bold;
+  }
+
+  /* Snackbar Animation */
+  @-webkit-keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
+
+  @media only screen and (max-width: 1020px) {
+    #main {
+      padding-inline: 0;
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    #main .interaction_area {
+      width: 100%;
+    }
+
+    #main .interaction_area .feature .about_text {
+      text-align: center;
+      font-size: 30px;
+    }
+
+    #main #sidebar,
+    #main .fake_sidebar {
+      width: 50px;
+    }
+
+    #main #sidebar .item_links {
+      padding-inline: 10px;
+    }
+
+    #main #sidebar .item_link_div {
+      padding-inline: 10px;
+      height: 30px;
+      justify-content: center;
+      display: flex;
+    }
+
+    #main #sidebar .item_link_div .item_link_div_a {
+      display: none;
+    }
+
+    #main #sidebar .item_link_div .item_link_div_icon {
+      left: auto;
+    }
+
+    #main .interaction_area .feature .setting {
+      flex-wrap: wrap;
+    }
+
+    #main .interaction_area .update_input {
+      max-width: 70px;
+    }
+
+    #snackbars #makeChanges_snackbar {
+      flex-direction: column;
+      height: auto !important;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_text {
+      margin-top: 5px;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_buttons {
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_text .mobile_makeChanges_text {
+      display: block;
+    }
+
+    #snackbars #makeChanges_snackbar .makeChanges_text .pc_makeChanges_text {
+      display: none;
+    }
+  }
+</style>

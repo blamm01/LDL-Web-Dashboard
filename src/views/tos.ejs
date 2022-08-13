@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lân Đông Lào</title>
+    <link rel="stylesheet" href="/css/defaults/style.css" />
+    <link rel="stylesheet" href="/css/defaults/responsive.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <link
+      rel="shortcut icon"
+      href="/images/icon.png"
+      type="image/x-icon"
+    />
+    <script
+      src="https://kit.fontawesome.com/dd4ab22b06.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <%-include("./partials/header.ejs")%>
+
+    <div id="main">
+      <div class="terms_of_service">
+        <h5 class="heading">Điều khoản dịch vụ</h5>
+        <ul class="tos_sections">
+          <li class="tos_section">
+            <h4 class="title">Thoả thuận dịch vụ</h4>
+            <p class="desc">
+              Với việc mời và sử dụng bot Lân Đông Lào vào máy chủ của bạn, đó
+              đồng nghĩa với việc bạn đã đọc, hiểu và chấp nhận Điều khoản. Bạn
+              cũng có trách nhiệm phải chia sẻ Điều khoản với các thành viên
+              khác trong máy chủ. Nếu bạn không đồng ý với một trong các Điều
+              khoản sau, bạn sẽ không được phép tiếp tục sử dụng bot.
+            </p>
+          </li>
+          <li class="tos_section">
+            <h4 class="title">Sự từ chối trách nhiệm</h4>
+            <p class="desc">
+              Bạn bị cấm không được phép sử dụng bot để chống lại
+              <a href="https://discord.com/tos"
+                >Điều khoản dịch vụ của Discord</a
+              >
+              hay cho các mục đích bất hợp pháp. Tôi đang cố gắng để ngăn chặn
+              những hoạt động trên xảy ra đồng thời cung cấp cho người dùng
+              những trải nghiệm tốt nhất. Nếu bạn thấy người dùng nào sử dụng
+              bot cho các mục đích kể trên, vui lòng gửi thông báo cho tôi thông
+              qua
+              <a href="https://discord.gg/8592Gbk"
+                >máy chủ LanDongLao Help Server</a
+              >
+              hoặc DM nếu có thể.
+            </p>
+          </li>
+          <li class="tos_section">
+            <h4 class="title">Quyền sở hữu</h4>
+            <p class="desc">
+              Tôi sở hữu và giữ mọi quyền đối với những dữ liệu được công khai.
+              Tôi cấp quyền cho bạn có thể sử dụng những dữ liệu này cho nhu cầu
+              của *riêng* bạn nhưng tuyệt đối không sử dụng cho mục đích thương
+              mại (bán, cấp phép, thương mại hóa dữ liệu) trừ khi có được sự cấp
+              phép từ tôi.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <%-include("./partials/footer.ejs")%>
+
+    <script src="/js/defaults/app.js"></script>
+  </body>
+</html>
+
+<style>
+  a {
+    color: red;
+    font-weight: bold;
+  }
+
+  #main .terms_of_service {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-inline: 100px;
+    text-align: justify;
+    margin-top: 100px;
+    margin-bottom: 75px;
+    font-size: 20px;
+  }
+
+  #main .terms_of_service .heading {
+    font-size: 50px;
+    font-family: Calibri, sans-serif;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  #main .terms_of_service .desc {
+    font-size: 20px;
+    font-family: Calibri, sans-serif;
+    margin-bottom: 40px;
+  }
+
+  #main .tos_sections .tos_section .title {
+    font-size: 28px;
+  }
+
+  @media only screen and (max-width: 800px) {
+    #main {
+      padding-inline: 0;
+      text-align: center;
+    }
+
+    #main .terms_of_service .heading {
+      font-size: 35px;
+    }
+
+    #main .terms_of_service {
+      padding: 30px;
+    }
+
+    #main .tos_section .title {
+      font-size: 18px;
+    }
+
+    #main .tos_section .desc {
+      font-size: 16px;
+    }
+  }
+</style>
