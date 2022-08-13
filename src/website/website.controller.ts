@@ -1,5 +1,6 @@
-import { Controller, Req, Res, Get } from '@nestjs/common';
+import { Controller, Req, Res, Get, UseFilters } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { NotFoundFilter } from './filters/NotFound/notfound.filter';
 import { WebsiteProvider } from "./providers/website"
 
 @Controller()

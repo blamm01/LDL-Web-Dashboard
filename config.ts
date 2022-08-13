@@ -4,8 +4,8 @@ export default {
 
   CLIENT_TOKEN: "MTAwNDAzNjY0NDI2MjkxMjAxMA.GIMHtz.Shzg3Cp1Y-FM5nZYPCJFea7CVBZOoEI3tfnhvM",
   CLIENT_ID: '1004036644262912010',
-  CLIENT_SECRET: '4VBZ_syPuJEEk77oVLsYDzCSXWCFfnsD',
-  CALLBACK_URL: 'http://localhost:3000/api/auth/callback',
+  CLIENT_SECRET: 'Qh_GGky3UFyAMeLXmStTqqwz5Yk4JFna',
+  CALLBACK_URL: 'https://ldl-web-dashboard-production.up.railway.app/api/auth/callback',
   SCOPES: ['identify', 'guilds'],
   MAX_AGE: 86400000,
 

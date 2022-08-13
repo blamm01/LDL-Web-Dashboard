@@ -1,4 +1,5 @@
-import { Controller, Req, Res, Get } from '@nestjs/common';
+import { Controller, Req, Res, Get, UseFilters } from '@nestjs/common';
+import { NotFoundFilter } from '../filters/NotFound/notfound.filter';
 import { Request, Response } from 'express';
 
 @Controller('dashboard')
