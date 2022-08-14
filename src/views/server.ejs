@@ -56,17 +56,6 @@
           <div class="feature settings">
             <p class="about_text">Cài đặt chung</p>
             <div class="dash"></div>
-            <div class="prefix setting">
-              <label for="prefix_input" class="update_label">Prefix:</label>
-              <input
-                type="text"
-                name="prefix"
-                id="prefix_input"
-                placeholder="Loading..."
-                class="update_input"
-                maxlength="3"
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -77,8 +66,14 @@
             <p class="about_text">Quản lý tự động</p>
             <div class="dash"></div>
             <div class="caps setting">
-              <label id="caps_label" class="update_label" for="caps_onOffButton">Từ ngữ in hoa:</label>
-              <button type="button" class="on_off_btn" id="caps_onOffButton"></button>
+              <label id="caps_label" class="update_label" for="caps_onOffButton"
+                >Từ ngữ in hoa:</label
+              >
+              <button
+                type="button"
+                class="on_off_btn"
+                id="caps_onOffButton"
+              ></button>
             </div>
           </div>
         </div>
@@ -141,186 +136,137 @@
     <script src="/js/defaults/app.js"></script>
     <script type="text/javascript">
       // Render Page
-      renderPage(window.location.hash == "" ? "#" : window.location.hash);
+      renderPage(window.location.hash == '' ? '#' : window.location.hash);
 
-      window.addEventListener("hashchange", () => {
-        renderPage(window.location.hash == "" ? "#" : window.location.hash);
+      window.addEventListener('hashchange', () => {
+        renderPage(window.location.hash == '' ? '#' : window.location.hash);
       });
 
       async function renderPage(hash) {
-        if (!hash) hash = "#";
+        if (!hash) hash = '#';
 
         // Render interaction area
         const interaction_area_div = document.querySelectorAll(
-          "#main .interaction_area"
+          '#main .interaction_area',
         );
-        let hashPageName = hash == "#" ? "main" : hash.substring(1);
+        let hashPageName = hash == '#' ? 'main' : hash.substring(1);
         interaction_area_div.forEach((interactionArea) => {
           if (!interactionArea.classList.contains(hashPageName)) {
-            interactionArea.style["display"] = "none";
+            interactionArea.style['display'] = 'none';
           } else {
-            interactionArea.style["display"] = "block";
+            interactionArea.style['display'] = 'block';
           }
         });
 
         // Render sidebar links
         const sidebar_link_div = document.querySelectorAll(
-          "#main #sidebar .item_links .item_link_div"
+          '#main #sidebar .item_links .item_link_div',
         );
         sidebar_link_div.forEach((div) => {
-          if (div.classList.contains("selected")) {
-            div.classList.remove("selected");
+          if (div.classList.contains('selected')) {
+            div.classList.remove('selected');
           }
         });
 
         const sidebar_selected_link_div = document.querySelector(
-          `#main #sidebar .item_links #sidebar__link--${hashPageName}`
+          `#main #sidebar .item_links #sidebar__link--${hashPageName}`,
         );
         if (sidebar_selected_link_div) {
           console.log(sidebar_selected_link_div);
-          if (!sidebar_selected_link_div.classList.contains("selected")) {
-            sidebar_selected_link_div.classList.add("selected");
+          if (!sidebar_selected_link_div.classList.contains('selected')) {
+            sidebar_selected_link_div.classList.add('selected');
           }
         }
       }
 
       async function save(type) {
-        if (type == "prefix") {
-          const prefix = document.querySelector("#prefix_input").value;
+        if (type == 'log') {
+          let log = document.querySelector('#logs_select').value;
+          if (log == 'turn_off') log = null;
 
           try {
             const res = await fetch(
-              `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/general/prefix`,
+              `<%= config.domainLink %>/api/settings/<%= guild.id %>/log`,
               {
-                method: "POST",
+                method: 'POST',
                 headers: {
-                  authorization: `<%= req.cookies.token %>`,
-                  "Content-Type": "application/json",
+                  authorization: `<%= user.secretAccessKey %>`,
+                  'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                  prefix: prefix,
+                  log: log
                 }),
-              }
+              },
             );
-            const fetchedData = await res.json();
-            if (!`${fetchedData.status}`.startsWith("2")) {
+            const fetchedData = (await res.text()) ? JSON.parse(await res.text()) : {};
+            if (
+              fetchedData?.statusCode
+                ? !(`${fetchedData?.statusCode}`.startsWith('2'))
+                : null
+              ||
+              !(`${res.status}`.startsWith('2'))
+            ) {
               return alert(
                 `Lỗi khi cập nhật dữ liệu: ${
-                  fetchedData.message || "Không biết"
-                } (Mã lỗi: ${fetchedData.status || res.status || "N/A"})`
+                  fetchedData?.message || fetchedData?.error || "N/A"
+                } (Mã lỗi: ${fetchedData.status || res.status || 'N/A'})`,
               );
             }
           } catch (err) {
             console.log(err);
             alert(
-              `Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`
-            );
-          }
-        } else if (type == "log") {
-          let log = document.querySelector("#logs_select").value;
-          if (log == "turn_off") log = null;
-
-          try {
-            const res = await fetch(
-              `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/logs/logchannel`,
-              {
-                method: "POST",
-                headers: {
-                  authorization: `<%= req.cookies.token %>`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  log: log,
-                }),
-              }
-            );
-            const fetchedData = await res.json();
-            if (!`${fetchedData.status}`.startsWith("2")) {
-              return alert(
-                `Lỗi khi cập nhật dữ liệu: ${
-                  fetchedData.message || "Không biết"
-                } (Mã lỗi: ${fetchedData.status || res.status || "N/A"})`
-              );
-            }
-          } catch (err) {
-            console.log(err);
-            alert(
-              `Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`
+              `Đã có lỗi xảy ra khi cập nhật dữ liệu! ${err} | Vui lòng tải lại trang và thử lại.`,
             );
           }
         } else {
           alert(
-            "Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang."
+            'Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang.',
           );
         }
       }
 
       async function get(type, placeholderRender = false) {
         let returnValue;
-        if (type == "channels") {
+        if (type == 'channels') {
           let value;
           let fetchedData = await fetch(
-            `<%= config.domainLink %>/api/info/guild/<%= guild.id %>/channels`,
+            `<%= config.domainLink %>/api/information/guilds/<%= guild.id %>`,
             {
-              method: "GET",
+              method: 'GET',
               headers: {
-                authorization: `<%= req.cookies.token %>`,
+                authorization: `<%= user.secretAccessKey %>`,
               },
-            }
+            },
           );
           if (!fetchedData) return;
           fetchedData = await fetchedData.json();
-          returnValue = fetchedData.data || [];
-        } else if (type == "prefix") {
+          returnValue = fetchedData.data?.texts || [];
+          console.log(fetchedData.data)
+        } else if (type == 'log') {
           let value;
           let data = await fetch(
-            `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/general/prefix`,
+            `<%= config.domainLink %>/api/settings/<%= guild.id %>/log`,
             {
-              method: "GET",
+              method: 'GET',
               headers: {
-                authorization: `<%= req.cookies.token %>`,
+                authorization: `<%= user.secretAccessKey %>`,
               },
-            }
+            },
           );
           if (!data) return;
           data = await data.json();
-          const prefix = data.prefix || `<%= config.prefix %>`;
+          const log = data.data || '0';
 
           // Replace placeholder
           if (placeholderRender) {
-            const prefixInput = document.querySelector("#prefix_input");
-            if (prefixInput) {
-              prefixInput.placeholder = prefix;
-              prefixInput.value = prefix;
-            }
-          }
-
-          returnValue = prefix;
-        } else if (type == "log") {
-          let value;
-          let data = await fetch(
-            `<%= config.domainLink %>/api/features/settings/<%= guild.id %>/logs/logchannel`,
-            {
-              method: "GET",
-              headers: {
-                authorization: `<%= req.cookies.token %>`,
-              },
-            }
-          );
-          if (!data) return;
-          data = await data.json();
-          const log = data.log || "0";
-
-          // Replace placeholder
-          if (placeholderRender) {
-            const logSelect = document.querySelector("#logs_select");
-            const channels = await get("channels");
+            const logSelect = document.querySelector('#logs_select');
+            const channels = await get('channels');
             if (logSelect) {
               await channels.map((channel) => {
                 logSelect.innerHTML += `<option value="${
                   channel.id
                 }" id="log_channel_${channel.id}" ${
-                  channel.id == log ? "selected" : ""
+                  channel.id == log ? 'selected' : ''
                 }>${channel.name}</option>`;
               });
             }
@@ -329,53 +275,31 @@
           returnValue = log;
         } else {
           alert(
-            "Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang."
+            'Lỗi! Câu lệnh gọi hàm chưa được điền đúng tham số. Vui lòng tải lại trang.',
           );
         }
         return returnValue;
       }
 
       // Render placeholder
-      get("prefix", true);
-      get("log", true);
+      get('log', true);
 
       // Detect changes
       let changesArray = [];
 
-      get("prefix").then((prefix) => {
-        const prefixInput = document.querySelector("#prefix_input");
-        if (prefixInput) {
-          prefixInput.addEventListener("change", () => {
-            const prefixInputValue = prefixInput.value;
-            if (prefixInputValue == prefix) {
-              console.log(true);
-              if (changesArray.find((v) => v.type == "prefix"))
-                changesArray.filter((v) => v.type !== "prefix");
-              return;
-            }
-            changesArray.push({
-              type: "prefix",
-              old: prefix,
-            });
-
-            changesDetected(false, false, true);
-          });
-        }
-      });
-
-      get("log").then((channelId) => {
-        const logSelect = document.querySelector("#logs_select");
+      get('log').then((channelId) => {
+        const logSelect = document.querySelector('#logs_select');
         if (logSelect) {
-          logSelect.addEventListener("change", () => {
-            const logSelectValue = logSelect.value ? "turn_off" : "0";
+          logSelect.addEventListener('change', () => {
+            const logSelectValue = logSelect.value ? 'turn_off' : '0';
             if (logSelectValue == channelId) {
               console.log(true);
-              if (changesArray.find((v) => v.type == "log"))
-                changesArray.filter((v) => v.type !== "log");
+              if (changesArray.find((v) => v.type == 'log'))
+                changesArray.filter((v) => v.type !== 'log');
               return;
             }
             changesArray.push({
-              type: "log",
+              type: 'log',
               old: channelId,
             });
 
@@ -387,57 +311,57 @@
       async function changesDetected(
         saveChanges = true,
         revertChanges = false,
-        showMakeChanges = false
+        showMakeChanges = false,
       ) {
         const makeChanges_snackbar = document.querySelector(
-          "#makeChanges_snackbar"
+          '#makeChanges_snackbar',
         );
-        const validChanges = ["prefix", "log"];
+        const validChanges = ['log'];
 
         if (showMakeChanges) {
           if (changesArray.length <= 0) {
-            if (makeChanges_snackbar.classList.contains("show")) {
-              makeChanges_snackbar.classList.remove("show");
-              makeChanges_snackbar.classList.add("hide");
+            if (makeChanges_snackbar.classList.contains('show')) {
+              makeChanges_snackbar.classList.remove('show');
+              makeChanges_snackbar.classList.add('hide');
               setTimeout(() => {
-                makeChanges_snackbar.classList.remove("hide");
+                makeChanges_snackbar.classList.remove('hide');
               }, 450);
             }
-            if (makeChanges_snackbar.classList.contains("hide")) {
-              makeChanges_snackbar.classList.remove("hide");
+            if (makeChanges_snackbar.classList.contains('hide')) {
+              makeChanges_snackbar.classList.remove('hide');
             }
           } else {
-            if (!makeChanges_snackbar.classList.contains("show")) {
-              if (makeChanges_snackbar.classList.contains("hide")) {
-                makeChanges_snackbar.classList.remove("hide");
+            if (!makeChanges_snackbar.classList.contains('show')) {
+              if (makeChanges_snackbar.classList.contains('hide')) {
+                makeChanges_snackbar.classList.remove('hide');
               }
-              makeChanges_snackbar.classList.add("show");
+              makeChanges_snackbar.classList.add('show');
             }
           }
           return;
         }
 
         if (changesArray.length <= 0) {
-          if (makeChanges_snackbar.classList.contains("show")) {
-            makeChanges_snackbar.classList.remove("show");
-            makeChanges_snackbar.classList.add("hide");
+          if (makeChanges_snackbar.classList.contains('show')) {
+            makeChanges_snackbar.classList.remove('show');
+            makeChanges_snackbar.classList.add('hide');
             setTimeout(() => {
-              makeChanges_snackbar.classList.remove("hide");
+              makeChanges_snackbar.classList.remove('hide');
             }, 450);
           }
-          if (makeChanges_snackbar.classList.contains("hide")) {
-            makeChanges_snackbar.classList.remove("hide");
+          if (makeChanges_snackbar.classList.contains('hide')) {
+            makeChanges_snackbar.classList.remove('hide');
           }
           return;
         }
 
         if (saveChanges == true && revertChanges == false) {
           const saveChangesButton = document.querySelector(
-            "#saveChangesBtn_makeChanges_snackbar"
+            '#saveChangesBtn_makeChanges_snackbar',
           );
           console.log(saveChangesButton);
           if (saveChangesButton) {
-            saveChangesButton.innerText = "...";
+            saveChangesButton.innerText = '...';
           }
           const mapChanges = () =>
             new Promise(async (ful) => {
@@ -451,7 +375,7 @@
             });
           mapChanges().then(() => {
             alert(
-              "Cập nhật thành công dữ liệu của máy chủ này! Vui lòng nhấn OK để tải lại trang"
+              'Cập nhật thành công dữ liệu của máy chủ này! Vui lòng nhấn OK để tải lại trang',
             );
             window.location.reload();
           });
@@ -779,7 +703,10 @@
       margin-bottom: 5px;
     }
 
-    #snackbars #makeChanges_snackbar .makeChanges_text .mobile_makeChanges_text {
+    #snackbars
+      #makeChanges_snackbar
+      .makeChanges_text
+      .mobile_makeChanges_text {
       display: block;
     }
 

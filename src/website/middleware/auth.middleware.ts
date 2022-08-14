@@ -49,11 +49,14 @@ export class AuthMiddleware implements NestMiddleware {
       return res.redirect('/');
     }
 
+    if((data.expires_in + data.lastUpdated) <= Date.now()) {
+      await data.delete();
+      return res.redirect('/')
+    }
+
     data.guilds = data.guilds.filter(g => {
       const guild = bot.guilds.cache.get(g.id);
       if(!guild) return false;
-      const member = guild.members.cache.get(data.userId);
-      if(!member || !member.permissions.has(PermissionFlagsBits.Administrator)) return false;
       return true;
     })
 

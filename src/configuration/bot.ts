@@ -2,7 +2,10 @@ import * as Discord from 'discord.js';
 import config from '../../config';
 
 const Client = new Discord.Client({
-  intents: [],
+  intents: [
+    Discord.IntentsBitField.Flags.Guilds,
+    Discord.IntentsBitField.Flags.GuildMembers,
+  ],
 });
 
 export default () => {

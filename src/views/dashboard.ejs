@@ -30,7 +30,7 @@
                 </div> -->
         <% data.guilds.map((guild) => { %>
         <% guild.slicedName = guild.name.length <= 14 ? guild.name : guild.name.slice(0, 14) + "..." %>
-        <div onclick="location.href='/servers/<%= guild.id %>'" class="server" id="<%= guild.id %>">
+        <div onclick="location.href='/dashboard/<%= guild.id %>'" class="server" id="<%= guild.id %>">
           <img src="<%= guild.avatar || '/images/noavatar.png' %>" alt="/images/noavatar.png" />
           <span><%= guild.slicedName %></span>
           <p class="go_to_dash_btn" id="accessBtn_<%= guild.id %>">Truy cập</p>

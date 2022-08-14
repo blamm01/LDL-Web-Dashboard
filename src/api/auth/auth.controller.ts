@@ -1,5 +1,6 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   HttpException,
   ParseUUIDPipe,
@@ -75,7 +76,7 @@ export class AuthController {
         userId: user.id,
         accessToken: OAuthData.access_token,
         refreshToken: OAuthData.refresh_token,
-        expires_in: OAuthData.expires_in,
+        expires_in: OAuthData.expires_in * 1000,
         user: {
           id: user.id,
           username: user.username,
