@@ -31,10 +31,11 @@
         <% data.guilds.map((guild) => { %>
         <% guild.slicedName = guild.name.length <= 14 ? guild.name : guild.name.slice(0, 14) + "..." %>
         <div onclick="location.href='/dashboard/<%= guild.id %>'" class="server" id="<%= guild.id %>">
-          <img src="<%= guild.avatar || '/images/noavatar.png' %>" alt="/images/noavatar.png" />
+          <img src="<%= guild.avatar || '/images/noavatar.png' %>" alt="Server avatar" />
           <span><%= guild.slicedName %></span>
           <p class="go_to_dash_btn" id="accessBtn_<%= guild.id %>">Truy cập</p>
         </div>
+
         <% }) %>
         <% if(data.guilds.length == 0) { %>
           <p style="margin-bottom: 100px; font-size: 24px;">Không tìm thấy bất kì máy chủ nào! Hãy đảm bảo bạn có quyền quản trị và tôi ở trong máy chủ đó</p>

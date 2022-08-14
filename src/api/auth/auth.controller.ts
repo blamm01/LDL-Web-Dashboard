@@ -21,6 +21,7 @@ import { PermissionFlagsBits } from 'discord.js';
 import { sign, verify } from 'jsonwebtoken';
 import { IsString } from 'class-validator';
 import { getUserCallbackDTO } from './dtos/GetUserCallback.dto';
+import { async } from 'rxjs';
 
 @Controller('api/auth')
 export class AuthController {
@@ -69,6 +70,15 @@ export class AuthController {
     });
 
     guilds = guilds.filter((g) => new Discord.BitField(g.permissions).has('8'));
+    let availableGuilds = []
+    await guilds.forEach(async(g: any) => await (new Promise(async(ful) => {
+      const guild = bot.guilds.cache.get(g.id);
+      if(!guild) return;
+      g.avatar = await guild.iconURL() || null;
+      availableGuilds.push(g)
+      console.log(g)
+      ful(true)
+    })))
 
     let userData = await userSchema.findOne({ userId: user.id });
     if (!userData)
@@ -85,7 +95,7 @@ export class AuthController {
             ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`
             : null,
         },
-        guilds: guilds,
+        guilds: availableGuilds
       });
 
     const id = userData._id.toString();
@@ -94,7 +104,7 @@ export class AuthController {
       uuid: id,
     };
 
-    userData.guilds = guilds;
+    userData.guilds = availableGuilds;
     userData.secretAccessKey = sign(TokenPayload, config.JWT_TOKEN);
     await userData.save();
     res.cookie('token', userData.secretAccessKey);
