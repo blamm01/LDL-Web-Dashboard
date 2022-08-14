@@ -101,15 +101,26 @@ export class AuthController {
   }
 
   @Get('/login')
-  async getLogin(@Req() req: Request, @Res() res: Response) {
+  getLogin(@Req() req: Request, @Res() res: Response) {
     res.redirect(OAuthClient.generateOAuthURL({
       scope: config.SCOPES
     }))
   }
 
   @Get('/logout')
-  async getLogout(@Res() res: Response) {
+  getLogout(@Res() res: Response) {
     res.clearCookie("token")
     res.redirect('/')
+  }
+
+  @Get('/invite')
+  async getInvite(@Res() res: Response) {
+    res.redirect(OAuthClient.generateOAuthURL({
+      scope: [
+        ...config.SCOPES,
+        "bot"
+      ],
+      permissions: "536098499710"
+    }))
   }
 }

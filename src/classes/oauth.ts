@@ -90,7 +90,7 @@ class DiscordOAuthClass {
 
   generateOAuthURL(opt) {
     const obj = {
-      scope: (Array.isArray(opt.scopes) ? opt.scopes : this.scopes).join(' '),
+      scope: (Array.isArray(opt.scope) ? opt.scope : this.scopes).join(' '),
       client_id: this.clientId,
       redirect_uri: opt.url || this.callbackURL,
       response_type: "code",

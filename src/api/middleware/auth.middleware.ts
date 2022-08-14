@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NestMiddleware,
   Next,
@@ -20,34 +21,21 @@ export class AuthMiddleware implements NestMiddleware {
     @Res() res: Response,
     @Next() next: () => void,
   ) {
-    const token = req.headers.authorization || req.cookies['token'];
+    const token = req.headers.authorization;
 
-    if (!token) return res.redirect('/');
-    if (!isJWT(token)) {
-      res.clearCookie('token');
-      return res.redirect('/');
-    }
+    if (!token) throw new ForbiddenException("Authorization token is missing")
+    if (!isJWT(token)) throw new ForbiddenException("Authorization token is not JWT token")
 
     let decoded;
     try {
       decoded = verify(token, config.JWT_TOKEN);
     } catch (err) {}
 
-    if (!decoded) {
-      res.clearCookie('token');
-      return res.redirect('/');
-    }
-
-    if (!decoded.userId || !decoded.uuid) {
-      res.clearCookie('token');
-      return res.redirect('/');
-    }
+    if (!decoded) throw new ForbiddenException("Invalid authorization token")
+    if (!decoded.userId || !decoded.uuid) throw new ForbiddenException("Invalid authorization token")
 
     const data = await userSchema.findOne({ _id: decoded.uuid });
-    if (!data) {
-      res.clearCookie('token');
-      return res.redirect('/');
-    }
+    if (!data) throw new ForbiddenException("Data linked to authorization token can't be found")
 
     data.guilds = data.guilds.filter(g => {
       const guild = bot.guilds.cache.get(g.id);
