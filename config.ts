@@ -10,5 +10,5 @@ export default {
   MAX_AGE: 86400000,
 
   MONGO_URI:
-    'mongodb+srv://PewZew:20042007@cluster0.zulbe7d.mongodb.net/?retryWrites=true&w=majority',
+    'mongodb+srv://Admin:Admin@db-for-multi-bot.iymce.mongodb.net/ldl-web-dashboard?retryWrites=true&w=majority',
 };
